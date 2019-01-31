@@ -1,13 +1,80 @@
 document.getElementById('taskInputForm').addEventListener('submit', saveTask);
 
+var tasks = this.tasksList();
+
+function buildHeap() {
+  var tasks = this.tasksList();
+  for (var i = tasks.length - 1; i > 0; i--) {
+    heapifyDown(i);
+  }
+  fetchTasks();
+}
+
+function heapifyUp(index) {
+  var tasks = this.tasksList();
+  var priority = tasks[0];
+  var parent = Math.floor(index/2);
+
+  if (index !== 1) {
+    if (compare(tasks[index], tasks[parent], priority)) {
+      swap(index, parent);
+      console.log(index);
+      heapifyUp(parent);
+    }
+  }
+}
+
+function heapifyDown(index) {
+  var tasks = this.tasksList();
+  var priority = tasks[0];
+  var size = tasks.length;
+  var highestPriority = index;
+  var left = 2*index;
+  var right = 2*index+1;
+
+  if (left <= size - 1) {
+    if (compare(tasks[left], tasks[highestPriority], priority))
+      highestPriority = left;
+  }
+
+  if (right <= size - 1) {
+    if (compare(tasks[right], tasks[highestPriority], priority))
+      highestPriority = right;
+  }
+
+  if (highestPriority !== index) {
+    swap(index, highestPriority);
+    heapifyDown(highestPriority);
+  }
+}
+
+function compare(firstElement, secondElement, priority) {
+  //var p = (priority === "quickest") ? "time" : "difficulty";
+  var p = "time";
+  return (firstElement[p] < secondElement[p]);
+}
+
+function swap(firstIndex, secondIndex) {
+  var tasks = this.tasksList();
+  if (secondIndex === "last")
+    secondIndex = tasks.length - 1;
+
+  var tmp = tasks[firstIndex];
+
+  tasks[firstIndex] = tasks[secondIndex];
+  tasks[secondIndex] = tmp;
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  //fetchTasks();
+}
+
 function changePriority() {
-  const tasks = this.tasksList();
-  const tasksList = document.getElementById('tasksList');
-  const priorityBox = document.getElementById("priorityBox");
+  var tasks = this.tasksList();
+  var tasksList = document.getElementById('tasksList');
+  var priorityBox = document.getElementById("priorityBox");
   var priority;
-  if (tasks[0] == "soonest")
+  if (tasks[0] === "soonest")
     priority = "easiest";
-  else if (tasks[0] == "easiest")
+  else if (tasks[0] === "easiest")
     priority = "quickest";
   else
     priority = "soonest";
@@ -27,8 +94,8 @@ function tasksList() {
 }
 
 function fetchTasks () {
-  const tasks = this.tasksList();
-  const tasksList = document.getElementById('tasksList');
+  var tasks = this.tasksList();
+  var tasksList = document.getElementById('tasksList');
   
   tasksList.innerHTML = '';
 
@@ -37,7 +104,7 @@ function fetchTasks () {
     for(var i = 1; i < tasks.length; i++)
     {
       var element = tasks[i];
-      const {id, desc, time, difficulty, dueDate, completionStatus} = element;
+      var {id, desc, time, difficulty, dueDate, completionStatus} = element;
       tasksList.innerHTML +=   `<div class="well">
             <h6>Task ID:  ${id} </h6>
             <p><span class="label label-info">${completionStatus}</span></p>
@@ -52,13 +119,13 @@ function fetchTasks () {
 }
 
 function saveTask(e) {
-  const id = chance.guid(); //not sure if needed
-  const desc = document.getElementById('taskDescInput').value;
-  const difficulty = document.getElementById('taskDifficultyInput').value;
-  const time = document.getElementById('taskTimeInput').value;
-  const dueDate = document.getElementById('taskDueDateInput').value;    // make into if statement
+  var id = chance.guid(); //not sure if needed
+  var desc = document.getElementById('taskDescInput').value;
+  var difficulty = document.getElementById('taskDifficultyInput').value;
+  var time = document.getElementById('taskTimeInput').value;
+  var dueDate = document.getElementById('taskDueDateInput').value;    // make into if statement
   //const tasks = tasksList();
-  const tasks = JSON.parse(localStorage.getItem('tasks')) || ["soonest"];
+  var tasks = JSON.parse(localStorage.getItem('tasks')) || ["soonest"];
 
   tasks.push({
     id,
@@ -69,23 +136,35 @@ function saveTask(e) {
     completionStatus: 'To Do'
   });
 
+  
   localStorage.setItem('tasks', JSON.stringify(tasks))
+  heapifyUp(tasks.length - 1);
   document.getElementById('taskInputForm').reset();   //resets form
-
   fetchTasks();   //makes new list of all forms (prob can do better, by just adding it)
 
   e.preventDefault(); // prevents default form to be submitted
 }
 
+function pop() {
+  swap(1, "last");
+  var tasks = this.tasksList();
+  console.log(tasks.pop());
+  localStorage.setItem('tasks', JSON.stringify(tasks));  
+
+  heapifyUp(tasks.length - 1);
+  // tasks.pop();
+  // localStorage.setItem('tasks', JSON.stringify(tasks));
+  //heapifyUp(tasks.length - 1);
+}
+
 function deleteTask(id) {
-  const tasks = this.tasksList();
-  const taskToDelete = tasks.find(taskToFind => {
+  var tasks = this.tasksList();
+  var taskToDelete = tasks.find(taskToFind => {
     return taskToFind.id === id
   });
 
-  const indOf = tasks.indexOf(taskToDelete)
+  var indOf = tasks.indexOf(taskToDelete)
   tasks.splice(indOf, 1)
   localStorage.setItem('tasks', JSON.stringify(tasks));
-
   fetchTasks();
 }
