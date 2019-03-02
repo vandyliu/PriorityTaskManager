@@ -32,7 +32,6 @@ function fetchTasks () {
   
   tasksList.innerHTML = '';
 
-
   if (tasks.length > 0) {
     for(var i = 1; i < tasks.length; i++)
     {
