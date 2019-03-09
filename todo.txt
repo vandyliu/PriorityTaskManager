@@ -1,12 +1,10 @@
-- make array a heap
-- push all the tasks into a local XML or JSON file
 - add a function to see all tasks in X order 
 	- X = time priority, due date priority, easiest
 - spit out the one task the person should do from a certain question
 [I have very little time] [I'm feeling very motivated] [Doing the thing due soon]
-- complete a task (remove object from array)
 
-- add a weekly task [advanced]
+- add a weekly task
    - start date - end date
    - only shows one of these weekly tasks at a time
 
+- add calendar api to sync up with google calendar
