@@ -1,4 +1,4 @@
-Try it out at https://vandyliu.github.io/taskmanager.html
+Try it out at https://vandyliu.github.io/tasks.html
 
 test with "live-server"
 
