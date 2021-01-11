@@ -87,6 +87,19 @@ function errTasks(err) {
 	console.log(err);
 }
 
+function setupFirebase() {
+	var config = {
+		apiKey: "AIzaSyBfC366dnGEl83wJRhrmdxgFIGRx6D4hyA",
+		authDomain: "priority-to-do-list.firebaseapp.com",
+		databaseURL: "https://priority-to-do-list.firebaseio.com",
+		projectId: "priority-to-do-list",
+		storageBucket: "priority-to-do-list.appspot.com",
+		messagingSenderId: "722313367455"
+	};
+	firebase.initializeApp(config);
+	database = firebase.database();
+}
+
 function logIn() {
 	var uiConfig = {
 		signInSuccessUrl: 'loggedin.html',
